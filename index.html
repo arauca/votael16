@@ -22,7 +22,7 @@
 						return;
 					}
 					var div = $('#results');
-					div.html(div.html() + '<li><a href="' + item.file.url + '">' + item.file.title + ' ' + item.file.url + '</a></li>');
+					div.html(div.html() + '<li><a href="' + encodeURIComponent(item.file.url) + '">' + item.file.title + '</a></li>');
 				});
 			});
 		});

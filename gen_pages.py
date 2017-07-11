@@ -1,7 +1,13 @@
-import numpy as np
+from subprocess import call
 import pandas as pd
+import numpy as np
+import unicodedata
+import collections
 import argparse
+import shutil
+import json
 import os
+import re
 
 
 def makedirs(path):
@@ -26,43 +32,143 @@ def get_args():
     parser.add_argument('--template', metavar="T", nargs='?',
                         default=os.path.join("data", "template.html"),
                         help='Template file')
+
     return parser.parse_args()
 
 
-def center_template(args):
-    f = open(args.template)
-    ret = f.read()
-    f.close()
-    return ret
+def remove_accents(tks):
+    return [tk.encode('ascii', 'ignore').decode('ascii')
+            for tk in tks]
+
+
+def get_stopwords():
+    return set([tk.lower() for tk in ['CALLE', 'FRENTE', 'PRINCIPAL',
+                                      'MUNICIPIO', 'ESTADO', 'EDO',
+                                      'MCPIO']])
 
 
 args = get_args()
 
+shutil.rmtree(args.output)
 makedirs(args.output)
 df = pd.read_excel(args.data, sheetname=args.sheet)
-template = center_template(args)
+
+f = open(args.template)
+template = f.read()
+f.close()
+
+print('Creating pages')
+all_small = []
+stopwords = get_stopwords()
+
+index = {}
+files = {}
+
+docs = 1
+title_str = 'Edo. {state}, {municipality}, {parish}. {name}. {address}'
 
 for state_gk, states in df.groupby('ESTADO'):
-    next_state_path = os.path.join(args.output, state_gk)
+    next_state_path = os.path.join(args.output,
+                                   re.sub('[\.\s]+', '', state_gk))
     makedirs(next_state_path)
 
-    print(state_gk)
+    print('  ', state_gk)
 
     for municipality_gk, municipalities in states.groupby('MUNICIPIO'):
-        next_path = os.path.join(args.output, state_gk, municipality_gk)
+        next_path = os.path.join(next_state_path,
+                                 re.sub('[\.\s]+', '',
+                                        municipality_gk.replace('MP.', '')))
         makedirs(next_path)
 
         municipalities = municipalities.to_dict(orient='records')
 
         for center in municipalities:
-            next_string = template.format(state=center['ESTADO'],
-                                          municipality=center['MUNICIPIO'],
-                                          parish=center['PARROQUIA'],
-                                          name=center['NOMBRE'],
-                                          address=center['DIRECCION'],
-                                          tables=center['MESAS'])
+            address = center['DIRECCION']
+            if type(address) == float:
+                address = ''
+
+            # Create the index text
+            full_str = u' '.join([center['ESTADO'], center['MUNICIPIO'],
+                                  center['PARROQUIA'], center['NOMBRE'],
+                                  address])
+
+            # FIXME: Remove special characters (this could be done with
+            # unicode regular expressions)
+            full_str = u''.join([c for c in full_str
+                                 if c not in "#(),-./0123456789;"])
+
+            # Split in tokens
+            full_str = full_str.split()
+
+            # Include the words without accents
+            full_str = [val for pair in zip(full_str,
+                                            remove_accents(full_str))
+                        for val in pair]
+
+            # Remove small words and domain-specific stop-words
+            full_str = [tk for tk in full_str
+                        if len(tk) > 3 and tk.lower() not in stopwords]
+
+            # TODO: Introduce errors
+
+            next_tk_frequency = {}
+
+            for tk_id, tk in enumerate(full_str):
+                tk = tk.lower()
+                pos_rel = 2. ** (len(full_str) - tk_id)
+                max_rel = 2. ** len(full_str)
+                next_tk_frequency[tk] = next_tk_frequency.get(tk, []) + \
+                    [pos_rel / max_rel]
+            next_tk_frequency = {tk: max(rels)
+                                 for tk, rels in next_tk_frequency.items()}
+
+            for tk, rel in next_tk_frequency.items():
+                index[tk] = index.get(tk, [])
+                index[tk].append({'f': docs, 'w': 1 + rel})
+
+            files[str(docs)] = \
+                {'url': os.path.join(next_path,
+                                     '%d.html' % center['CODIGO_PS']),
+                 'title': title_str.format(
+                     state=center['ESTADO'].title(),
+                     municipality=center['MUNICIPIO'].title(),
+                     parish=center['PARROQUIA'].title(),
+                     name=center['NOMBRE'].title(),
+                     address=address)}
+            print(os.path.join(next_path,
+                                     '%d.html' % center['CODIGO_PS']))
+            docs += 1
+
+            next_string = \
+                template.format(state=center['ESTADO'].title(),
+                                municipality=center['MUNICIPIO'].title(),
+                                parish=center['PARROQUIA'].title(),
+                                name=center['NOMBRE'],
+                                address=address,
+                                tables=center['MESAS'])
 
             f = open(os.path.join(next_path,
                                   '%d.html' % center['CODIGO_PS']), 'w')
             f.write(next_string)
             f.close()
+
+f = open('jssearch.index.js', 'w')
+f.write('jssearch.index = ' + json.dumps(index) + ';\n')
+f.write('jssearch.files= ' + json.dumps(files) + ';\n')
+f.write(
+"""
+jssearch.tokenizeString = function(string) {
+        var stopWords = ["a","an","and","are","as","at","be","but","by","for","if","in","into","is","it","no","not","of","on","or","such","that","the","their","then","there","these","they","this","to","was","will","with"];
+        return string.split(/[\s\.,;\:\\\/\[\]\(\)\{\}]+/).map(function(val) {
+            return val.toLowerCase();
+        }).filter(function(val) {
+            for (w in stopWords) {
+                if (stopWords[w] == val) return false;
+            }
+            return true;
+        }).map(function(word) {
+            return {t: word, w: 1};
+        });
+};
+""")
+f.close()
