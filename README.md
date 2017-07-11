@@ -1,7 +1,7 @@
 # votael16
 Dónde votar en la Consulta Popular este 16 de junio de 2017.
 
-# Instructions
+## How to build the index
 - Install Composer
 ```
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -11,3 +11,6 @@ php -r "unlink('composer-setup.php');"
 ```
 - Run `php composer.phar install`
 - Run `vendor/bin/jsindex data/` to build the index to `jssearch.index.js` (PHP >= 5.4.0 required)
+
+## Current issues
+I think we need a separate .html file for every voting center. The index is generated correctly, but the responses to the queries are currently useless. Run `vendor/bin/jsindex tests/data/` to see a different example, and see the [original demo](http://cebe.github.io/js-search/#demo) for more inspiration.
