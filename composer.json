@@ -1,0 +1,14 @@
+{
+    "require": {
+		"php": ">=5.4.0",
+        "cebe/js-search": "~0.9"
+    },
+	"autoload": {
+		"psr-4": {
+			"cebe\\jssearch\\": "lib/"
+		}
+	},
+	"bin": [
+		"bin/jsindex"
+	]
+}
