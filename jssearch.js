@@ -69,7 +69,10 @@ var jssearch = {
 			res.push(result[i]);
 		}
 		res.sort(function(a,b) { return b.weight - a.weight; });
-		return res;
+        
+        var sub_res = jssearch.filterFalsePositives(res, words);
+
+		return sub_res;
 	},
 
 	searchForWords: function(words) {
@@ -81,6 +84,7 @@ var jssearch = {
 						result[file.f].weight *= file.w * word.w;
 					} else {
 						result[file.f] = {
+                            identifier: file.f,
 							file: jssearch.files[file.f],
 							weight: file.w * word.w
 						};
@@ -90,6 +94,34 @@ var jssearch = {
 		});
 		return result;
 	},
+
+    filterFalsePositives: function(results, words) {
+        var new_results = [];
+        for (var result in results) {
+            var next = results[result];
+            var all = true;
+            words.forEach(function(word) {
+                if (jssearch.index[word.t]){
+                    var in_next = false;
+                    var word_index = jssearch.index[word.t];
+                    for (var file in word_index) {
+                        if (word_index[file].f ==  next.identifier){
+                            in_next = true;
+                            break;
+                        }
+                    }
+                    if (!in_next){
+                        all = false;
+                        return;
+                    }
+                }
+            });
+            if(all){
+                new_results.push(results[result]);
+            }
+        };
+        return new_results;
+    },
 
 	completeWords: function(words) {
 		var result = [];

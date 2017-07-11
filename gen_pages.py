@@ -112,7 +112,7 @@ for state_gk, states in df.groupby('ESTADO'):
 
             # Remove small words and domain-specific stop-words
             full_str = [tk for tk in full_str
-                        if len(tk) > 3 and tk.lower() not in stopwords]
+                        if len(tk) > 2 and tk.lower() not in stopwords]
 
             # TODO: Introduce errors
 
@@ -121,8 +121,8 @@ for state_gk, states in df.groupby('ESTADO'):
 
             for tk_id, tk in enumerate(full_str):
                 tk = tk.lower()
-                pos_rel = 2. ** (len(full_str) - tk_id)
-                max_rel = 2. ** len(full_str)
+                pos_rel = len(full_str) - tk_id
+                max_rel = len(full_str)
                 next_tk_frequency[tk] = next_tk_frequency.get(tk, []) + \
                     [pos_rel / max_rel]
             next_tk_frequency = {tk: max(rels)
@@ -133,15 +133,20 @@ for state_gk, states in df.groupby('ESTADO'):
                 index[tk].append({'f': docs, 'w': 1 + rel})
 
             # Generate the new entry
-            files[str(docs)] = \
-                {'url': os.path.join(next_path,
-                                     '%d.html' % center['CODIGO_PS']),
-                 'title': title_str.format(
+            title = title_str.format(
                      state=center['ESTADO'].title(),
                      municipality=center['MUNICIPIO'].title(),
                      parish=center['PARROQUIA'].title(),
                      name=center['NOMBRE'].title(),
-                     address=address)}
+                     address=address)
+            
+            for rp in ['Mp. ', 'Mp.', 'MP.']:
+                title = title.replace(rp, '')
+
+            files[str(docs)] = \
+                {'url': os.path.join(next_path,
+                                     '%d.html' % center['CODIGO_PS']),
+                 'title': title}
             print(os.path.join(next_path,
                                      '%d.html' % center['CODIGO_PS']))
             docs += 1
