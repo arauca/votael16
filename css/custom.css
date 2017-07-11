@@ -19,3 +19,7 @@ body {
 input {
     margin-bottom: 15px;
 }
+
+#shade {
+    background: rgba(20, 20, 20, 0.8);
+}
