@@ -34,7 +34,7 @@ def center_template(args):
     ret = f.read()
     f.close()
     return ret
-    
+
 
 args = get_args()
 
