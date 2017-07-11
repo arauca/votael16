@@ -20,11 +20,19 @@
 				$('#query').html(jssearch.queryWords.join(' '));
 
                 $('#results').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
+                console.log(result.length);
+                if (result.length >= 1) {
+                    $('#shade').css("background", "rgba(55, 55, 55, 1.0)");
+                }
+                else {
+                    $('#shade').css("background", "rgba(55, 55, 55, 0.8)");
+                }
 				var i = 0;
 				result.forEach(function(item) {
-					if (i++ > 7) {
+					/*don't limit number of results
+                      if (i++ > 50) {
 						return;
-					}
+					}*/
 					var div = $('#results');
 					div.html(div.html() + '<tr>' + item.file.title + '</tr>');
 				});
@@ -59,7 +67,7 @@
         </div>
         <div class="main-container">
             <section class="cover imagebg height-100 text-center" data-overlay="4">
-                <div class="background-image-holder"><img alt="background" src="img/fondo.jpg"></div>
+                <div class="background-image-holder"><img id="background-image" alt="background" src="img/fondo.jpg"></div>
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-10 col-md-8">
