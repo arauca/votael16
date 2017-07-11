@@ -1,0 +1,43 @@
+[
+    {
+        "name": "cebe/js-search",
+        "version": "0.9.3",
+        "version_normalized": "0.9.3.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/cebe/js-search.git",
+            "reference": "3756a8b3387f3f7e5c778b964ec681dcf110b098"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/cebe/js-search/zipball/3756a8b3387f3f7e5c778b964ec681dcf110b098",
+            "reference": "3756a8b3387f3f7e5c778b964ec681dcf110b098",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4.0"
+        },
+        "time": "2016-11-22T12:11:39+00:00",
+        "bin": [
+            "bin/jsindex"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "cebe\\jssearch\\": "lib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Carsten Brandt",
+                "email": "mail@cebe.cc"
+            }
+        ],
+        "description": "A client side search engine for use on static pages."
+    }
+]
