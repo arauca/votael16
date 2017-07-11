@@ -19,10 +19,10 @@
 
 				$('#query').html(jssearch.queryWords.join(' '));
 
-                $('#results').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
-                console.log(result.length);
+                $('#results').html('');
                 if (result.length >= 1) {
                     $('#shade').css("background", "rgba(55, 55, 55, 1.0)");
+                    $('#results').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
                 }
                 else {
                     $('#shade').css("background", "rgba(55, 55, 55, 0.8)");
