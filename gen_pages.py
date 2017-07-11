@@ -138,7 +138,7 @@ for state_gk, states in df.groupby('ESTADO'):
                      municipality=center['MUNICIPIO'].title(),
                      parish=center['PARROQUIA'].title(),
                      name=center['NOMBRE'].title(),
-                     address=address)
+                     address=address.title())
             
             for rp in ['Mp. ', 'Mp.', 'MP.']:
                 title = title.replace(rp, '')
