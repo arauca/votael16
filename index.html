@@ -29,10 +29,9 @@
                 }
 				var i = 0;
 				result.forEach(function(item) {
-					/*don't limit number of results
-                      if (i++ > 50) {
+                    if (i++ > 50) {
 						return;
-					}*/
+                    }
 					var div = $('#results');
 					div.html(div.html() + '<tr>' + item.file.title + '</tr>');
 				});
