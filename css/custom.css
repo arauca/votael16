@@ -1,0 +1,21 @@
+/*! Place your custom styles here */
+.bar {
+    height: 9em;
+}
+
+.bar .logo {
+    max-height: 5em;
+    max-width: none;
+}
+
+.nav-container {
+    background: white;
+}
+
+body {
+    background: #373737;
+}
+
+input {
+    margin-bottom: 15px;
+}
