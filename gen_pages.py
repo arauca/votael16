@@ -70,7 +70,7 @@ index = {}
 files = {}
 
 docs = 1
-title_str = 'Edo. {state}, {municipality}, {parish}. {name}. {address}'
+title_str = '{state} | {municipality} | {parish} | {name} | {address}'
 
 for state_gk, states in df.groupby('ESTADO'):
     next_state_path = os.path.join(args.output,
