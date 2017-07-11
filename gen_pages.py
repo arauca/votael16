@@ -50,7 +50,11 @@ def get_stopwords():
 
 args = get_args()
 
-shutil.rmtree(args.output)
+try:
+    shutil.rmtree(args.output)
+except:
+    pass
+
 makedirs(args.output)
 df = pd.read_excel(args.data, sheetname=args.sheet)
 
