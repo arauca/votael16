@@ -42,9 +42,10 @@ def remove_accents(tks):
 
 
 def get_stopwords():
-    return set([tk.lower() for tk in ['CALLE', 'FRENTE', 'PRINCIPAL',
-                                      'MUNICIPIO', 'ESTADO', 'EDO',
-                                      'MCPIO']])
+    f = open('data/stopwords.csv')
+    stopwords = set([x.strip().lower() for x in f.readlines()])
+    f.close()
+    return stopwords
 
 
 args = get_args()
