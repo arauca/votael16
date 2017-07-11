@@ -21,10 +21,10 @@ def get_args():
                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--data', metavar="D", nargs='?',
                         default=os.path.join('data',
-                                             'nacional-2017-07-10-18-00.xlsx'),
+                                             'nacional-2017-07-11-12-30.xlsx'),
                         help='Path to the Excel data file')
     parser.add_argument('--sheet', metavar="S", nargs='?',
-                        default='TablaMesasNacional',
+                        default='TablaMesaVenezuela',
                         help='Path to the Excel data file')
     parser.add_argument('--output', metavar="O", nargs='?',
                         default=os.path.join("output", "pages"),

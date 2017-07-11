@@ -1,50 +1,84 @@
 <!doctype html>
-<html>
-<head>
-	<meta charset="UTF-8">
-
-	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="./jssearch.js"></script>
-	<script src="./jssearch.index.js"></script>
-
-	<script type="text/javascript">
-
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/stack-interface.css" rel="stylesheet" type="text/css" media="all">
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/theme.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="css/custom.css" rel="stylesheet" type="text/css" media="all" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,400i,500,600,700" rel="stylesheet">
+        <script src="js/jquery-3.1.1.min.js"></script>
+        <script src="./jssearch.js"></script>
+        <script src="./jssearch.index.js"></script>
+        <script type="text/javascript">
 		$( document ).ready(function() {
 			$('#searchbox').on("keyup", function() {
 				var result = jssearch.search($(this).val());
 
 				$('#query').html(jssearch.queryWords.join(' '));
 
-				$('#results').html('');
+                $('#results').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
 				var i = 0;
 				result.forEach(function(item) {
-					if (i++ > 20) {
+					if (i++ > 7) {
 						return;
 					}
 					var div = $('#results');
-					div.html(div.html() + '<li><a href="' + encodeURIComponent(item.file.url) + '">' + item.file.title + '</a></li>');
+					div.html(div.html() + '<tr>' + item.file.title + '</tr>');
 				});
 			});
 		});
-	</script>
-
-	<title>Example</title>
-</head>
-<body>
-
-	<h1>Example</h1>
-
-	<label for="searchbox" style="display: inline-block; width: 160px;">Search: </label>
-	<input id="searchbox" type="text" value="">
-
-	<br/>
-
-	<label for="query" style="display: inline-block; width: 160px;">Actual query: </label>
-	<span id="query"></span>
-
-	<ul id="results">
-		<li>No results</li>
-	</ul>
-
-</body>
+        </script>   
+    </head>
+    <body data-smooth-scroll-offset="77">
+        <div class="nav-container">
+            <div>
+                <div class="bar bar--sm visible-xs">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xs-3 col-sm-2">
+                                <a href="#"> <img class="logo logo-dark" alt="logo" src="img/logo.jpg"> </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <nav id="menu2" class="bar bar-2 hidden-xs">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-2 text-center text-left-sm hidden-xs col-md-push-5">
+                                <div class="bar__module">
+                                    <a href="#"> <img class="logo logo-dark" alt="logo" src="img/logo.jpg"> </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <div class="main-container">
+            <section class="cover imagebg height-100 text-center" data-overlay="4">
+                <div class="background-image-holder"><img alt="background" src="img/fondo.jpg"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-10 col-md-8">
+                            <h1>Busca tu Punto Soberano</h1>
+                            <div id="shade" class="boxed boxed--border boxed--lg text-left">
+                                <form autocomplete="off" class="form--horizontal">
+                                    <div class="col-sm-12"> <input id="searchbox" value="" type="text" name="search" placeholder="Escribe un estado, municipio, parroquia o dirección"> </div>
+                                </form>
+                                <table id="results">
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="js/parallax.js"></script>
+        <script src="js/granim.min.js"></script>
+        <script src="js/smooth-scroll.min.js"></script>
+        <script src="js/scripts.js"></script>
+    </body>
 </html>
