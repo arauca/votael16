@@ -111,6 +111,7 @@ for state_gk, states in df.groupby('ESTADO'):
 
             # TODO: Introduce errors
 
+            # Compute weight of each word in the center
             next_tk_frequency = {}
 
             for tk_id, tk in enumerate(full_str):
@@ -126,6 +127,7 @@ for state_gk, states in df.groupby('ESTADO'):
                 index[tk] = index.get(tk, [])
                 index[tk].append({'f': docs, 'w': 1 + rel})
 
+            # Generate the new entry
             files[str(docs)] = \
                 {'url': os.path.join(next_path,
                                      '%d.html' % center['CODIGO_PS']),
@@ -158,7 +160,7 @@ f.write('jssearch.files= ' + json.dumps(files) + ';\n')
 f.write(
 """
 jssearch.tokenizeString = function(string) {
-        var stopWords = ["a","an","and","are","as","at","be","but","by","for","if","in","into","is","it","no","not","of","on","or","such","that","the","their","then","there","these","they","this","to","was","will","with"];
+        var stopWords = [%s];
         return string.split(/[\s\.,;\:\\\/\[\]\(\)\{\}]+/).map(function(val) {
             return val.toLowerCase();
         }).filter(function(val) {
@@ -170,5 +172,5 @@ jssearch.tokenizeString = function(string) {
             return {t: word, w: 1};
         });
 };
-""")
+""" % ', '.join(['"%s"' % x for x in stopwords]))
 f.close()
