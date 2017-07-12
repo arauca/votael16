@@ -14,6 +14,11 @@
         <script src="./jssearch.index.js"></script>
         <script type="text/javascript">
 		$( document ).ready(function() {
+            $('#searchbox').keypress(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                }
+            });
 			$('#searchbox').on("keyup", function() {
 				var result = jssearch.search($(this).val());
 
