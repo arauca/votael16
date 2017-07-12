@@ -1,3 +1,5 @@
+# -*- coding: utf-8
+
 from subprocess import call
 import pandas as pd
 import numpy as np
@@ -21,16 +23,16 @@ def get_args():
                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--data', metavar="D", nargs='?',
                         default=os.path.join('data',
-                                             'nacional-2017-07-11-12-30.xlsx'),
+                                             'exterior-2017-07-11-20-00.xlsx'),
                         help='Path to the Excel data file')
     parser.add_argument('--sheet', metavar="S", nargs='?',
-                        default='TablaMesaVenezuela',
+                        default='Hoja3',
                         help='Path to the Excel data file')
     parser.add_argument('--output', metavar="O", nargs='?',
-                        default=os.path.join("output", "pages"),
+                        default=os.path.join("output2", "pages"),
                         help='Output directory')
     parser.add_argument('--template', metavar="T", nargs='?',
-                        default=os.path.join("data", "template.html"),
+                        default=os.path.join("data", "template-exterior.html"),
                         help='Template file')
 
     return parser.parse_args()
@@ -70,16 +72,16 @@ index = {}
 files = {}
 
 docs = 1
-title_str = '<td>{state}</td><td>{municipality}</td><td>{parish}</td><td>{name}</td><td>{address}</td>'
+title_str = '<td>{country}</td><td>{city}</td><td>{address}</td>'
 
-for state_gk, states in df.groupby('ESTADO'):
+for state_gk, states in df.groupby('Pais'):
     next_state_path = os.path.join(args.output,
                                    re.sub('[\.\s]+', '', state_gk))
     makedirs(next_state_path)
 
     print('  ', state_gk)
 
-    for municipality_gk, municipalities in states.groupby('MUNICIPIO'):
+    for municipality_gk, municipalities in states.groupby('Ciudad'):
         next_path = os.path.join(next_state_path,
                                  re.sub('[\.\s]+', '',
                                         municipality_gk.replace('MP.', '')))
@@ -87,14 +89,14 @@ for state_gk, states in df.groupby('ESTADO'):
 
         municipalities = municipalities.to_dict(orient='records')
 
+        center_code = 0
         for center in municipalities:
-            address = center['DIRECCION']
+            address = center['Dirección']
             if type(address) == float:
                 address = ''
 
             # Create the index text
-            full_str = u' '.join([center['ESTADO'], center['MUNICIPIO'],
-                                  center['PARROQUIA'], center['NOMBRE'],
+            full_str = u' '.join([center['Pais'], center['Ciudad'],
                                   address])
 
             # FIXME: Remove special characters (this could be done with
@@ -134,10 +136,8 @@ for state_gk, states in df.groupby('ESTADO'):
 
             # Generate the new entry
             title = title_str.format(
-                     state=center['ESTADO'].title(),
-                     municipality=center['MUNICIPIO'].title(),
-                     parish=center['PARROQUIA'].title(),
-                     name=center['NOMBRE'].title(),
+                     country=center['Pais'].title(),
+                     city=center['Ciudad'].title(),
                      address=address.title())
             
             for rp in ['Mp. ', 'Mp.', 'MP.']:
@@ -145,31 +145,29 @@ for state_gk, states in df.groupby('ESTADO'):
 
             files[str(docs)] = \
                 {'url': os.path.join(next_path,
-                                     '%d.html' % center['CODIGO_PS']),
+                                     '%d.html' % center_code),
                  'title': title}
             print(os.path.join(next_path,
-                                     '%d.html' % center['CODIGO_PS']))
+                                     '%d.html' % center_code))
             docs += 1
 
             next_string = \
-                template.format(state=center['ESTADO'].title(),
-                                municipality=center['MUNICIPIO'].title(),
-                                parish=center['PARROQUIA'].title(),
-                                name=center['NOMBRE'],
-                                address=address,
-                                tables=center['MESAS'])
+                template.format(country=center['Pais'].title(),
+                                city=center['Ciudad'].title(),
+                                address=address.title())
 
             f = open(os.path.join(next_path,
-                                  '%d.html' % center['CODIGO_PS']), 'w')
+                                  '%d.html' % center_code), 'w')
+            center_code += 1
             f.write(next_string)
             f.close()
 
-f = open('nacional.index.js', 'w')
-f.write('nacional.index = ' + json.dumps(index) + ';\n')
-f.write('nacional.files= ' + json.dumps(files) + ';\n')
+f = open('exterior.index.js', 'w')
+f.write('exterior.index = ' + json.dumps(index) + ';\n')
+f.write('exterior.files= ' + json.dumps(files) + ';\n')
 f.write(
 """
-nacional.tokenizeString = function(string) {
+exterior.tokenizeString = function(string) {
         var stopWords = [%s];
         return string.split(/[\s\.,;\:\\\/\[\]\(\)\{\}]+/).map(function(val) {
             return val.toLowerCase();

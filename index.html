@@ -10,8 +10,10 @@
         <link href="css/custom.css" rel="stylesheet" type="text/css" media="all" />
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:200,300,400,400i,500,600,700" rel="stylesheet">
         <script src="js/jquery-3.1.1.min.js"></script>
-        <script src="./jssearch.js"></script>
-        <script src="./jssearch.index.js"></script>
+        <script src="./nacional.js"></script>
+        <script src="./nacional.index.js"></script>
+        <script src="./exterior.js"></script>
+        <script src="./exterior.index.js"></script>
         <script type="text/javascript">
 		$( document ).ready(function() {
             $('#searchbox').keypress(function(event) {
@@ -20,24 +22,39 @@
                 }
             });
 			$('#searchbox').on("keyup", function() {
-				var result = jssearch.search($(this).val());
+				var rnacional = nacional.search($(this).val());
+				var rexterior = exterior.search($(this).val());
 
-				$('#query').html(jssearch.queryWords.join(' '));
+				$('#query').html(nacional.queryWords.join(' '));
 
-                $('#results').html('');
-                if (result.length >= 1) {
+                $('#nacional').html('');
+                $('#exterior').html('');
+
+                if (rnacional.length >= 1) {
                     $('#shade').css("background", "rgba(55, 55, 55, 1.0)");
-                    $('#results').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
+                    $('#nacional').html('<tr><th>Estado</th><th>Municipio</th><th>Parroquia</th><th>Nombre</th><th>Dirección</th></tr>');
+                }
+                if (rexterior.length >= 1) {
+                    $('#shade').css("background", "rgba(55, 55, 55, 1.0)");
+                    $('#exterior').html('<tr><th>País</th><th>Ciudad</th><th>Dirección</th></tr>');
                 }
                 else {
                     $('#shade').css("background", "rgba(55, 55, 55, 0.8)");
                 }
 				var i = 0;
-				result.forEach(function(item) {
+				rnacional.forEach(function(item) {
                     if (i++ > 50) {
 						return;
                     }
-					var div = $('#results');
+					var div = $('#nacional');
+					div.html(div.html() + '<tr>' + item.file.title + '</tr>');
+				});
+				var i = 0;
+				rexterior.forEach(function(item) {
+                    if (i++ > 5) {
+						return;
+                    }
+					var div = $('#exterior');
 					div.html(div.html() + '<tr>' + item.file.title + '</tr>');
 				});
 			});
@@ -80,7 +97,9 @@
                                 <form autocomplete="off" class="form--horizontal">
                                     <div class="col-sm-12"> <input id="searchbox" value="" type="text" name="search" placeholder="Escribe un estado, municipio, parroquia o dirección"> </div>
                                 </form>
-                                <table id="results">
+                                <table id="nacional">
+                                </table>
+                                <table id="exterior">
                                 </table>
                             </div>
                         </div>
