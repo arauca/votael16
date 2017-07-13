@@ -23,10 +23,10 @@ def get_args():
                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--data', metavar="D", nargs='?',
                         default=os.path.join('data',
-                                             'exterior-2017-07-11-20-00.xlsx'),
+                                             'exterior-2017-07-12-23-00.xlsx'),
                         help='Path to the Excel data file')
     parser.add_argument('--sheet', metavar="S", nargs='?',
-                        default='Hoja3',
+                        default='Sheet1',
                         help='Path to the Excel data file')
     parser.add_argument('--output', metavar="O", nargs='?',
                         default=os.path.join("output2", "pages"),
@@ -74,7 +74,7 @@ files = {}
 docs = 1
 title_str = '<td>{country}</td><td>{city}</td><td>{address}</td>'
 
-for state_gk, states in df.groupby('Pais'):
+for state_gk, states in df.groupby('País'):
     next_state_path = os.path.join(args.output,
                                    re.sub('[\.\s]+', '', state_gk))
     makedirs(next_state_path)
@@ -96,7 +96,7 @@ for state_gk, states in df.groupby('Pais'):
                 address = ''
 
             # Create the index text
-            full_str = u' '.join([center['Pais'], center['Ciudad'],
+            full_str = u' '.join([center['País'], center['Ciudad'],
                                   address])
 
             # FIXME: Remove special characters (this could be done with
@@ -136,7 +136,7 @@ for state_gk, states in df.groupby('Pais'):
 
             # Generate the new entry
             title = title_str.format(
-                     country=center['Pais'].title(),
+                     country=center['País'].title(),
                      city=center['Ciudad'].title(),
                      address=address.title())
             
@@ -152,7 +152,7 @@ for state_gk, states in df.groupby('Pais'):
             docs += 1
 
             next_string = \
-                template.format(country=center['Pais'].title(),
+                template.format(country=center['País'].title(),
                                 city=center['Ciudad'].title(),
                                 address=address.title())
 
