@@ -1,4 +1,5 @@
 from subprocess import call
+from json import encoder
 import pandas as pd
 import numpy as np
 import unicodedata
@@ -8,6 +9,11 @@ import shutil
 import json
 import os
 import re
+
+
+class myFloat:
+    def __init__(self, value):
+        self.value = value
 
 
 def makedirs(path):
@@ -48,6 +54,20 @@ def get_stopwords():
     return stopwords
 
 
+def introduce_errors(tks):
+    def tk_errors(tk):
+        return [
+                #tk.replace('s', 'z'),
+                #tk.replace('z', 's'),
+                #tk.replace('b', 'v'),
+                #tk.replace('v', 'b'),
+                #tk.replace('h', '')
+                ]
+
+    return [error for tk in tks for error in tk_errors(tk.lower())
+            if error != tk.lower()]
+
+
 args = get_args()
 
 try:
@@ -67,6 +87,7 @@ all_small = []
 stopwords = get_stopwords()
 
 index = {}
+
 files = {}
 
 docs = 1
@@ -114,7 +135,8 @@ for state_gk, states in df.groupby('ESTADO'):
             full_str = [tk for tk in full_str
                         if len(tk) > 2 and tk.lower() not in stopwords]
 
-            # TODO: Introduce errors
+            # Introduce errors
+            full_str = full_str + introduce_errors(full_str)
 
             # Compute weight of each word in the center
             next_tk_frequency = {}
@@ -130,7 +152,7 @@ for state_gk, states in df.groupby('ESTADO'):
 
             for tk, rel in next_tk_frequency.items():
                 index[tk] = index.get(tk, [])
-                index[tk].append({'f': docs, 'w': 1 + rel})
+                index[tk].append({'f': docs, 'w': myFloat(1 + rel)})
 
             # Generate the new entry
             title = title_str.format(
@@ -144,8 +166,9 @@ for state_gk, states in df.groupby('ESTADO'):
                 title = title.replace(rp, '')
 
             files[str(docs)] = \
-                {'url': os.path.join(next_path,
-                                     '%d.html' % center['CODIGO_PS']),
+                {
+                 #'url': os.path.join(next_path,
+                                     #'%d.html' % center['CODIGO_PS']),
                  'title': title}
             print(os.path.join(next_path,
                                      '%d.html' % center['CODIGO_PS']))
@@ -165,7 +188,8 @@ for state_gk, states in df.groupby('ESTADO'):
             f.close()
 
 f = open('nacional.index.js', 'w')
-f.write('nacional.index = ' + json.dumps(index) + ';\n')
+f.write('nacional.index = ' + \
+    json.dumps(index, default=lambda x: '%.2f' % x.value) + ';\n')
 f.write('nacional.files= ' + json.dumps(files) + ';\n')
 f.write(
 """
