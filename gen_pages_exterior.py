@@ -144,8 +144,9 @@ for state_gk, states in df.groupby('País'):
                 title = title.replace(rp, '')
 
             files[str(docs)] = \
-                {'url': os.path.join(next_path,
-                                     '%d.html' % center_code),
+                {
+                 #'url': os.path.join(next_path,
+                                     #'%d.html' % center_code),
                  'title': title}
             print(os.path.join(next_path,
                                      '%d.html' % center_code))

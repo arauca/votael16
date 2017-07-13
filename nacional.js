@@ -57,7 +57,6 @@ var nacional = {
 			return result;
 		}
 
-        var num_words = words.length;
 //		result = nacional.searchForWords(words);
 //		if ($.isEmptyObject(result)) {
 			words = nacional.completeWords(words);
@@ -71,7 +70,7 @@ var nacional = {
 		}
 		res.sort(function(a,b) { return b.weight - a.weight; });
         
-        var sub_res = nacional.filterFalsePositives(res, words, num_words);
+        var sub_res = nacional.filterFalsePositives(res, words);
 
 		return sub_res;
 	},
@@ -96,12 +95,11 @@ var nacional = {
 		return result;
 	},
 
-    filterFalsePositives: function(results, words, num_words) {
+    filterFalsePositives: function(results, words) {
         var new_results = [];
         for (var result in results) {
             var next = results[result];
             var all = true;
-            var num_matches = 0;
             words.forEach(function(word) {
                 if (nacional.index[word.t]){
                     var in_next = false;
@@ -109,18 +107,16 @@ var nacional = {
                     for (var file in word_index) {
                         if (word_index[file].f ==  next.identifier){
                             in_next = true;
-                            num_matches += 1;
                             break;
                         }
                     }
                     if (!in_next){
                         all = false;
-//                         return;
+                        return;
                     }
                 }
             });
-            console.log(num_matches, num_words);
-            if(num_matches == num_words){
+            if(all){
                 new_results.push(results[result]);
             }
         };
@@ -143,7 +139,6 @@ var nacional = {
 				result.push(word);
 			}
 		});
-        console.log(result);
 		return result;
 	},
 
