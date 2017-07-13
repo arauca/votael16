@@ -42,7 +42,7 @@
                     $('#shade').css("background", "rgba(55, 55, 55, 1.0)");
                     $('#exterior').html('<tr><th>País</th><th>Ciudad</th><th>Dirección</th></tr>');
                 }
-                else {
+                if (rnacional.length == 0 && rexterior.length == 0) {
                     $('#shade').css("background", "rgba(55, 55, 55, 0.8)");
                 }
 				var i = 0;
