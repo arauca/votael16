@@ -50,6 +50,26 @@ def get_stopwords():
     return stopwords
 
 
+def introduce_errors(tks):
+    def tk_errors(tk):
+        return [
+                #tk.replace('s', 'z'),
+                #tk.replace('z', 's'),
+                #tk.replace('b', 'v'),
+                #tk.replace('v', 'b'),
+                #tk.replace('h', '')
+                tk.replace('ñ', 'n'),
+                tk.replace('á', 'a'),
+                tk.replace('é', 'e'),
+                tk.replace('í', 'i'),
+                tk.replace('ó', 'o'),
+                tk.replace('ú', 'u'),
+                ]
+
+    return [error for tk in tks for error in tk_errors(tk.lower())
+            if error != tk.lower()]
+
+
 args = get_args()
 
 try:
@@ -116,7 +136,8 @@ for state_gk, states in df.groupby('PAIS'):
             full_str = [tk for tk in full_str
                         if len(tk) > 2 and tk.lower() not in stopwords]
 
-            # TODO: Introduce errors
+            # Introduce errors
+            full_str = full_str + introduce_errors(full_str)
 
             # Compute weight of each word in the center
             next_tk_frequency = {}

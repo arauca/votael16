@@ -62,6 +62,12 @@ def introduce_errors(tks):
                 #tk.replace('b', 'v'),
                 #tk.replace('v', 'b'),
                 #tk.replace('h', '')
+                tk.replace('ñ', 'n'),
+                tk.replace('á', 'a'),
+                tk.replace('é', 'e'),
+                tk.replace('í', 'i'),
+                tk.replace('ó', 'o'),
+                tk.replace('ú', 'u'),
                 ]
 
     return [error for tk in tks for error in tk_errors(tk.lower())
