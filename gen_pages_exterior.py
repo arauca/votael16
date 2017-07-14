@@ -50,6 +50,64 @@ def get_stopwords():
     return stopwords
 
 
+def usa_alternatives(tks, center):
+    ltks = [tk.lower() for tk in tks]
+    new_tks = []
+    abbreviations = {'AL': 'Alabama',
+                     'AZ': 'Arizona',
+                     'CA': 'California',
+                     'CO': 'Colorado',
+                     'CT': 'Connecticut',
+                     'DC': ['District', 'Columbia', 'Dist'],
+                     'Dalton': 'Massachusetts',
+                     'FL': 'Florida',
+                     'GA': 'Georgia',
+                     'HI': 'Hawaii',
+                     'IL': 'Illinois',
+                     'IN': 'Indiana',
+                     'KS': 'Kansas',
+                     'KY': 'Kentucky',
+                     'LA': 'Louisiana',
+                     'MA': 'Massachusetts',
+                     'MD': 'Maryland',
+                     'MI': 'Michigan',
+                     'MN': 'Minnesota',
+                     'MO': 'Missouri',
+                     'MT': 'Montana',
+                     'NC': ['North', 'Carolina'],
+                     'NE': 'Nebraska',
+                     'NJ': ['New', 'Jersey'],
+                     'NM': ['New', 'Mexico'],
+                     'NV': 'Nevada',
+                     'NY': ['New', 'York'],
+                     'OH': 'Ohio',
+                     'OK': 'Oklahoma',
+                     'OR': 'Oregon',
+                     'PA': 'Pennsylvania',
+                     'Puerto Rico': ['Puerto', 'Rico'],
+                     'SC': ['South', 'Carolina'],
+                     'TN': 'Tennessee',
+                     'TX': 'Texas',
+                     'UT': 'Utah',
+                     'VA': 'Virginia',
+                     'WA': 'Washington',
+                     'WI': 'Wisconsin',
+                     }
+
+    if center['PAIS'] == 'ESTADOS UNIDOS':
+        new_tks += ['USA', 'EEUU']
+        abbr = center['CIUDAD'].split(',')[0]
+        if abbr not in abbreviations:
+            print('Abbreviation not found', abbr)
+        elif type(abbreviations[abbr]) == str:
+            new_tks.append(abbreviations[abbr])
+        else:
+            new_tks += abbreviations[abbr]
+    else:
+        return tks
+    return tks
+
+
 def introduce_errors(tks):
     def tk_errors(tk):
         return [
@@ -132,6 +190,8 @@ for state_gk, states in df.groupby('PAIS'):
                                             remove_accents(full_str))
                         for val in pair]
 
+            full_str = usa_alternatives(full_str, center)
+
             # Remove small words and domain-specific stop-words
             full_str = [tk for tk in full_str
                         if len(tk) > 2 and tk.lower() not in stopwords]
@@ -169,8 +229,8 @@ for state_gk, states in df.groupby('PAIS'):
                  #'url': os.path.join(next_path,
                                      #'%d.html' % center_code),
                  'title': title}
-            print(os.path.join(next_path,
-                                     '%d.html' % center_code))
+            #print(os.path.join(next_path,
+                                     #'%d.html' % center_code))
             docs += 1
 
             next_string = \
