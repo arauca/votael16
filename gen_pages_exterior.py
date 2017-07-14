@@ -23,7 +23,7 @@ def get_args():
                         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--data', metavar="D", nargs='?',
                         default=os.path.join('data',
-                                             'exterior-2017-07-12-23-00.xlsx'),
+                                             'exterior-2017-07-13-23-00.xlsx'),
                         help='Path to the Excel data file')
     parser.add_argument('--sheet', metavar="S", nargs='?',
                         default='Sheet1',
@@ -74,14 +74,14 @@ files = {}
 docs = 1
 title_str = '<td>{country}</td><td>{city}</td><td>{address}</td>'
 
-for state_gk, states in df.groupby('País'):
+for state_gk, states in df.groupby('PAIS'):
     next_state_path = os.path.join(args.output,
                                    re.sub('[\.\s]+', '', state_gk))
     makedirs(next_state_path)
 
     print('  ', state_gk)
 
-    for municipality_gk, municipalities in states.groupby('Ciudad'):
+    for municipality_gk, municipalities in states.groupby('CIUDAD'):
         next_path = os.path.join(next_state_path,
                                  re.sub('[\.\s]+', '',
                                         municipality_gk.replace('MP.', '')))
@@ -91,12 +91,12 @@ for state_gk, states in df.groupby('País'):
 
         center_code = 0
         for center in municipalities:
-            address = center['Dirección']
+            address = center['DIRECCION']
             if type(address) == float:
                 address = ''
 
             # Create the index text
-            full_str = u' '.join([center['País'], center['Ciudad'],
+            full_str = u' '.join([center['PAIS'], center['CIUDAD'],
                                   address])
 
             # FIXME: Remove special characters (this could be done with
@@ -136,8 +136,8 @@ for state_gk, states in df.groupby('País'):
 
             # Generate the new entry
             title = title_str.format(
-                     country=center['País'].title(),
-                     city=center['Ciudad'].title(),
+                     country=center['PAIS'].title(),
+                     city=center['CIUDAD'].title(),
                      address=address.title())
             
             for rp in ['Mp. ', 'Mp.', 'MP.']:
@@ -153,8 +153,8 @@ for state_gk, states in df.groupby('País'):
             docs += 1
 
             next_string = \
-                template.format(country=center['País'].title(),
-                                city=center['Ciudad'].title(),
+                template.format(country=center['PAIS'].title(),
+                                city=center['CIUDAD'].title(),
                                 address=address.title())
 
             f = open(os.path.join(next_path,
