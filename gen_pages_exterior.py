@@ -103,6 +103,7 @@ def usa_alternatives(tks, center):
             new_tks.append(abbreviations[abbr])
         else:
             new_tks += abbreviations[abbr]
+        return new_tks
     else:
         return tks
     return tks
@@ -190,7 +191,7 @@ for state_gk, states in df.groupby('PAIS'):
                                             remove_accents(full_str))
                         for val in pair]
 
-            full_str = usa_alternatives(full_str, center)
+            full_str = full_str + usa_alternatives(full_str, center)
 
             # Remove small words and domain-specific stop-words
             full_str = [tk for tk in full_str
