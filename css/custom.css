@@ -23,3 +23,7 @@ input {
 #shade {
     background: rgba(55, 55, 55, 0.8);
 }
+
+@media all and (max-width: 767px){
+  #shade{ overflow-x: scroll; }
+}
